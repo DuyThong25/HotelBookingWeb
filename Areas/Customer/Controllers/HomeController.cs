@@ -2,8 +2,9 @@ using HotelBookingWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace HotelBookingWeb.Controllers
+namespace HotelBookingWeb.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -38,7 +39,7 @@ namespace HotelBookingWeb.Controllers
             {
                 string data = await response.Content.ReadAsStringAsync();
                 // Process the data or return it as-is
-                return Json(new {data = data});
+                return Json(new { data });
             }
             else
             {

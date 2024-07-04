@@ -13,6 +13,9 @@ namespace HotelBookingWeb.Data
         }
 
         public DbSet<Hotel> Hotels { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<RoomCategory> RoomCategories { get; set; }
+        public DbSet<RoomImage> RoomImages { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
     }

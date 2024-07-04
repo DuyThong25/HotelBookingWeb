@@ -2,7 +2,7 @@
 
 namespace HotelBookingWeb.Models
 {
-    public class CategoryRoom
+    public class RoomCategory
     {
         public int Id { get; set; }
 

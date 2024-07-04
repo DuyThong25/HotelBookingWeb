@@ -38,7 +38,7 @@ namespace HotelBookingWeb.Models
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         [ValidateNever]
-        public CategoryRoom CategoryRoom { get; set; }
+        public RoomCategory CategoryRoom { get; set; }
 
         [ValidateNever]
         [Display(Name = "Hình ảnh phòng")]

@@ -13,6 +13,7 @@ namespace HotelBookingWeb.Data
         }
 
         public DbSet<Hotel> Hotels { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
     }
 }

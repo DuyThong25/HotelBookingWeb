@@ -29,6 +29,10 @@ namespace HotelBookingWeb.Models
         [Display(Name = "Trạng thái phòng")]
         public string Status { get; set; }
 
+        [Display(Name ="Ngày đặt phòng")]
+        public DateTime? CheckIn {  get; set; }
+        [Display(Name = "Ngày trả phòng")]
+        public DateTime? CheckOut {  get; set; }
 
         public int HotelId { get; set; }
         [ForeignKey("HotelId")]

@@ -1,0 +1,59 @@
+﻿@model RoomCategory;
+@{
+    if (Model.Id == 0)
+    {
+        ViewData["Title"] = "Thêm loại phòng";
+    }
+    else
+    {
+        ViewData["Title"] = "Cập nhật loại phòng";
+    }
+}
+<div class="container">
+    <div class="card shadow border-1 mt-4">
+        <div class="card-header bg-primary bg-gradient ml-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h2>@(Model.Id == 0 ? "Thêm" : "Chỉnh sửa") Phòng</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" class="row" enctype="multipart/form-data">
+                @* <div asp-validation-summary="All"></div> *@
+                <input asp-for="Id" hidden />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Name" class="form-control border-0 shadow" />
+                            <label asp-for="Name"></label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Capacity" min="1" max="20" class="form-control border-0 shadow" />
+                            <label asp-for="Capacity"></label>
+                            <span asp-validation-for="Capacity" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6 col-lg-3">
+                            <button type="submit" class="form-control btn btn-primary">
+                                @(Model.Id == 0 ? "Thêm" : "Chỉnh sửa")
+                            </button>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <a asp-controller="RoomCategory" asp-action="Index" class="form-control btn btn-outline-primary border">Quay lại</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial"></partial>
+    }
+}

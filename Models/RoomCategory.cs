@@ -6,12 +6,12 @@ namespace HotelBookingWeb.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Không được bỏ trống")]
         [Display(Name ="Loại phòng")]
         public string Name { get; set; }
-
+        [Required(ErrorMessage = "Không được bỏ trống")]
         [Display(Name ="Sức chứa")]
-        public int? Capacity { get; set; }
+        public int Capacity { get; set; }
 
     }
 }

@@ -1,8 +1,94 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿
+<style>
+    .product-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        padding: 15px;
+        background-color: #fff;
+    }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+</style>
+
+<div class="container-fluid p-0 border border-1 pb-5 bg-light" style="margin-top:-100px;">
+    <div class="row text-center">
+        <div class="col-md-12">
+            <h1 class="my-4">Tìm khách sạn - Giá tốt nhất</h1>
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="input-group w-50">
+                    <input type="text" class="form-control" placeholder="Chọn thành phố mà bạn muốn đến">
+                    <input type="text" class="form-control" id="dateRange" value="" placeholder="Chọn ngày khởi hành">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<div class="container my-4">
+    <h4 class="fw-bold">Lựa chọn tốt nhất</h4>
+    <div class="row">
+        <div class="col-md-3 my-3">
+            <div class="product-card">
+                <img src="product-image.jpg" alt="Product Image" class="img-fluid mb-3">
+                <div class="card-title fw-bold my-3">
+                    <h4>Châu Thiên Tứ</h4>
+                </div>
+                <div class="card-text my-3">
+                    <p><i class="bi bi-geo-alt"></i>TP.Hồ Chí Minh, Quận Tân Bình</p>
+                </div>
+                <div class="card-text  my-3">
+                    <p><strong>100,000 VND/ đêm</strong></p>
+                </div>
+                <div class="mt-4">
+                    <a href="#" class="btn w-100 btn-outline-primary">Đặt phòng ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Date Range Picker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- jQuery UI JS for Autocomplete -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#dateRange').daterangepicker({
+                locale: {
+                    format: 'DD/MM/YYYY'
+                }
+            });
+        });
+
+        // // Function to get cities from API
+        // function getCities() {
+        //     return $.get(
+        //         '/provinces/getAll?limit=-1',
+        //         (data) => {
+        //             console.log(data)
+        //         }
+        //     )
+        // }
+
+        // // Initialize the autocomplete with data from the API
+        // getCities().done(function (data) {
+        //     var cities = data.cities; // Adjust based on your API response structure
+        //     $('#cityInput').autocomplete({
+        //         source: cities
+        //     });
+        // }).fail(function (jqXHR, textStatus, errorThrown) {
+        //     console.error("Error fetching cities: ", textStatus, errorThrown);
+        // });
+
+    </script>
+}

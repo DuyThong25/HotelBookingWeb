@@ -4,6 +4,7 @@ using HotelBookingWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelBookingWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240705042505_AddColumnListImageToTableHotel")]
+    partial class AddColumnListImageToTableHotel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hotels", (string)null);
+                    b.ToTable("Hotels");
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.HotelImage", b =>
@@ -82,7 +85,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasIndex("HotelImageID");
 
-                    b.ToTable("HotelImages", (string)null);
+                    b.ToTable("HotelImages");
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.Room", b =>
@@ -130,7 +133,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Rooms", (string)null);
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.RoomCategory", b =>
@@ -150,7 +153,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoomCategories", (string)null);
+                    b.ToTable("RoomCategories");
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.RoomImage", b =>
@@ -172,7 +175,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomImages", (string)null);
+                    b.ToTable("RoomImages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

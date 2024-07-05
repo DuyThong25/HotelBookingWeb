@@ -55,7 +55,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hotels");
+                    b.ToTable("Hotels", (string)null);
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.HotelImage", b =>
@@ -82,7 +82,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasIndex("HotelImageID");
 
-                    b.ToTable("HotelImages");
+                    b.ToTable("HotelImages", (string)null);
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.Room", b =>
@@ -130,7 +130,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.RoomCategory", b =>
@@ -150,7 +150,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoomCategories");
+                    b.ToTable("RoomCategories", (string)null);
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.RoomImage", b =>
@@ -172,7 +172,7 @@ namespace HotelBookingWeb.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomImages");
+                    b.ToTable("RoomImages", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

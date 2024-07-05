@@ -27,6 +27,10 @@ namespace HotelBookingWeb.Models
         public string City { get; set; }
 
         [ValidateNever]
+        [Display(Name = "Danh sách phòng")]
+        public List<Room> Rooms { get; set; }
+
+        [ValidateNever]
         [Display(Name = "Hình ảnh khách sạn")]
         public List<HotelImage> HotelImages { get; set; }
     }

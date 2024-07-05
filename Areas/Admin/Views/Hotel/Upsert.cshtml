@@ -1,14 +1,5 @@
 ﻿@model Hotel;
-@{
-    if (Model.Id == 0)
-    {
-        ViewData["Title"] = "Thêm Khách sạn";
-    }
-    else
-    {
-        ViewData["Title"] = "Cập nhật khách sạn";
-    }
-}
+
 <div class="container">
     <div class="card shadow border-1 mt-4">
         <div class="card-header bg-primary bg-gradient ml-0 py-3">
@@ -74,9 +65,14 @@
                             <div class="col-6">
                                 <a asp-controller="Hotel" asp-action="Index" class="form-control btn btn-outline-primary border">Quay lại</a>
                             </div>
+                            <div class="col-12 my-3">
+                                <button type="button" class="form-control btn btn-warning border w-100" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Danh sách Phòng
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4 h-75 d-flex flex-column align-items-center overflow-scroll">
+                    <div style="height:500px;" class="col-md-4 d-flex flex-column align-items-center overflow-auto">
                         @if (Model.Id == 0)
                         {
                             <img width="300" class="img-fluid rounded border border-1" src="/image/no_image.jpg" alt="Image of Hotel" />
@@ -106,6 +102,101 @@
         </div>
     </div>
 </div>
+
+@* -- Danh sách phòng -- *@
+@if (Model.Id != 0) // Chỉ khi update mới có thê thêm phòng
+{
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h5 class="modal-title" id="exampleModalLabel">Danh sách phòng của khách sạn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a asp-area="" asp-controller="" asp-action="" class="btn btn-success">
+                                Tạo phòng
+                            </a>
+                        </div>
+                    </div>
+                    @if (Model.Rooms == null || Model.Rooms.Count == 0)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="text-center text-dark opacity-50 my-5">
+                                    <h3>Chưa có phòng nào được tạo.</h3>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var room in Model.Rooms)
+                        {
+                            <div class="row">
+                                <div class="col-sm-6 col-md-5 col-lg-3">
+                                    <div class="product-card">
+                                        <div style="height:250px;" class="d-flex justify-content-center">
+                                            @if (room.RoomImages != null && room.RoomImages.Count > 0)
+                                            {
+                                                <img class="img-fluid mb-3 " src="@room.RoomImages.FirstOrDefault().ImageUrl" />
+                                            }
+                                            else
+                                            {
+                                                <img class="img-fluid mb-3" src="~/image/no_image.jpg">
+                                            }
+                                        </div>
+
+                                        <div class="card-title fw-bold my-3">
+                                            <h4>@room.Name</h4>
+                                        </div>
+                                        <div class="my-3">
+                                            <span>@room.Code</span>
+                                        </div>
+                                        <div class="my-3">
+                                            <span>@room.Status</span>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="col-sm-12">
+                                                <div title="@(room.Status != StaticDetail.RoomStatus_Unavailable ? "Còn phòng trống" : "Hết phòng trống")"
+                                                     style="width:20px; height:20px;"
+                                                     class="rounded rounded-5 @(room.Status != StaticDetail.RoomStatus_Unavailable ? " bg-success" : "bg-danger" ) float-end d-block ">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-4">
+                                            <div class="col-6">
+                                                <a asp-area="" asp-controller="" asp-action="" asp-route-id="@room.Id" class="btn btn-primary w-100">
+                                                    <i title="Chỉnh sửa" class="bi bi-pencil-square"></i>
+                                                </a>
+                                            </div>
+                                            <div class="col-6">
+                                                <a onclick="DeleteConfirm('/admin/hotel/delete/@room.Id', this)" class="btn btn-outline-danger w-100">
+                                                    <i title="Xóa" class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
 
 
 @section Scripts {

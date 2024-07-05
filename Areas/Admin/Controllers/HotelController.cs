@@ -23,16 +23,17 @@ namespace HotelBookingWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            return View(_db.Hotels.ToList());
+            return View(_db.Hotels.Include("HotelImages").Include("Rooms").ToList());
         }
 
         public IActionResult Upsert(int? id)
         {
             Hotel hotel = new Hotel();
+
             if (id != null && id != 0) // update
             {
-                hotel = _db.Hotels.Include("HotelImages")
-                                  .FirstOrDefault(x => x.Id == id);
+                hotel = _db.Hotels.Include("HotelImages").Include("Rooms").FirstOrDefault(x => x.Id == id);
+                
             }
             return View(hotel);
         }
@@ -115,7 +116,7 @@ namespace HotelBookingWeb.Areas.Admin.Controllers
         public IActionResult DeleteImage(int imageId)
         {
             var imageToBeDeleted = _db.HotelImages.FirstOrDefault(x => x.ID == imageId);
-            int? hotelId = imageToBeDeleted.ID;
+            int hotelId = imageToBeDeleted.HotelId;
             if (imageToBeDeleted != null)
             {
                 if (!String.IsNullOrEmpty(imageToBeDeleted.ImageUrl))

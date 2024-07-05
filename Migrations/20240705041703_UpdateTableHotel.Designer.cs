@@ -4,6 +4,7 @@ using HotelBookingWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelBookingWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240705041703_UpdateTableHotel")]
+    partial class UpdateTableHotel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,33 +59,6 @@ namespace HotelBookingWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Hotels");
-                });
-
-            modelBuilder.Entity("HotelBookingWeb.Models.HotelImage", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("HotelId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("HotelImageID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("HotelId");
-
-                    b.HasIndex("HotelImageID");
-
-                    b.ToTable("HotelImages");
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.Room", b =>
@@ -408,21 +384,6 @@ namespace HotelBookingWeb.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
-            modelBuilder.Entity("HotelBookingWeb.Models.HotelImage", b =>
-                {
-                    b.HasOne("HotelBookingWeb.Models.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HotelBookingWeb.Models.HotelImage", null)
-                        .WithMany("HotelImages")
-                        .HasForeignKey("HotelImageID");
-
-                    b.Navigation("Hotel");
-                });
-
             modelBuilder.Entity("HotelBookingWeb.Models.Room", b =>
                 {
                     b.HasOne("HotelBookingWeb.Models.RoomCategory", "CategoryRoom")
@@ -502,11 +463,6 @@ namespace HotelBookingWeb.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("HotelBookingWeb.Models.HotelImage", b =>
-                {
-                    b.Navigation("HotelImages");
                 });
 
             modelBuilder.Entity("HotelBookingWeb.Models.Room", b =>

@@ -1,0 +1,115 @@
+﻿@model Hotel;
+@{
+    if (Model.Id == 0)
+    {
+        ViewData["Title"] = "Thêm Khách sạn";
+    }
+    else
+    {
+        ViewData["Title"] = "Cập nhật khách sạn";
+    }
+}
+<div class="container">
+    <div class="card shadow border-1 mt-4">
+        <div class="card-header bg-primary bg-gradient ml-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h2>@(Model.Id == 0 ? "Thêm" : "Chỉnh sửa") Khách sạn</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" class="row" enctype="multipart/form-data">
+                @* <div asp-validation-summary="All"></div> *@
+                <input asp-for="Id" hidden />
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Name" class="form-control border-0 shadow" />
+                            <label asp-for="Name"></label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Description" class="form-control border-0 shadow" />
+                            <label asp-for="Description"></label>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Street" class="form-control border-0 shadow" />
+                            <label asp-for="Street"></label>
+                            <span asp-validation-for="Street" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-floating py-2 col-12">
+                                    <input asp-for="Distinct" class="form-control border-0 shadow" />
+                                    <label asp-for="Distinct"></label>
+                                    <span asp-validation-for="Distinct" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-floating py-2 col-12">
+                                    <input asp-for="Ward" class="form-control border-0 shadow" />
+                                    <label asp-for="Ward"></label>
+                                    <span asp-validation-for="Ward" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-floating py-2 col-12">
+                                    <input asp-for="City" class="form-control border-0 shadow" />
+                                    <label asp-for="City"></label>
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input type="file" name="files" class="form-control border-0 shadow" multiple />
+                            <label asp-for="HotelImages"></label>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-6 ">
+                                <button type="submit" class="form-control btn btn-primary">
+                                    @(Model.Id == 0 ? "Thêm" : "Chỉnh sửa")
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <a asp-controller="Hotel" asp-action="Index" class="form-control btn btn-outline-primary border">Quay lại</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 h-75 d-flex flex-column align-items-center overflow-scroll">
+                        @if (Model.Id == 0)
+                        {
+                            <img width="300" class="img-fluid rounded border border-1" src="/image/no_image.jpg" alt="Image of Hotel" />
+                        }
+                        else
+                        {
+                            if (Model.HotelImages.Count > 0)
+                            {
+                                foreach (var item in Model.HotelImages)
+                                {
+                                    <div style="width:300px;" class="mb-4 position-relative">
+                                        <img width="300" class="img-fluid rounded border border-1 border-opacity-10 shadow " src="@item.ImageUrl" alt="No image found.." />
+                                        <button asp-action="DeleteImage" asp-route-imageId="@item.ID" title="Remove Image" class="btn btn-outline-danger border-black border-opacity-10  position-absolute bottom-0 end-0 w-100">
+                                            <i class="bi bi-trash h4 fw-bold"></i>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <img width="300" class="img-fluid rounded border border-1" src="/image/no_image.jpg" alt="Image of Hotel" />
+                            }
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial"></partial>
+    }
+}

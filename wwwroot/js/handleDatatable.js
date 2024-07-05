@@ -18,14 +18,18 @@ function DeleteConfirm(url, element) {
                 type: 'DELETE',
                 success: (data) => {
                     // Xóa hàng từ DataTable và DOM
-                    var table = $('#myTable').DataTable();
-                    table.row($(element).parents('tr'))
-                        .remove()
-                        .draw();
+                    //var table = $('#myTable').DataTable();
+                    //table.row($(element).parents('tr'))
+                    //    .remove()
+                    //    .draw();
                     Swal.fire({
                         title: "Xóa!",
                         text: data.message,
                         icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
                 }
             })

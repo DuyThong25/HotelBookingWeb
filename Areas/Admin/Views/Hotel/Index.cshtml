@@ -1,5 +1,63 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<Hotel>
+
+<div class="container">
+    <div class="card shadow border-1 mt-4">
+        <div class="card-header bg-primary bg-gradient py-3">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h2>Danh sách Khách sạn</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <a asp-area="Admin" asp-controller="Hotel" asp-action="Upsert" class="btn btn-outline-primary rounded-2 my-3 p-2">
+                Thêm khách sạn
+            </a>
+            <hr class="mb-5" />
+            <div class="row">
+                @if (Model.ToList().Count == 0 || Model == null)
+                {
+                    <h1 class="fw-bold text-center text-dark opacity-50">Chưa có khách sạn nào.</h1>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        var location = $"Tp.{@item.City}, Q.{item.Ward}";
+
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="product-card">
+                                <img class="img-fluid mb-3">
+                                <div class="card-title fw-bold my-3">
+                                    <h4>@item.Name</h4>
+                                </div>
+                                <div class="my-3">
+                                    <span><i class="bi bi-geo-alt"></i>@location</span>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="col-sm-12">
+                                        <small class="fw-bold">2 phòng trống</small>
+                                        <div title="Còn phòng trống" style="width:20px; height:20px;" class="rounded rounded-5 bg-success float-end d-block "></div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-6">
+                                        <a asp-controller="Hotel" asp-action="Upsert" asp-route-id="@item.Id" class="btn btn-primary w-100">
+                                            <i title="Chỉnh sửa" class="bi bi-pencil-square"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a onclick="DeleteConfirm('/admin/hotel/delete/@item.Id', this)" class="btn btn-outline-danger w-100">
+                                            <i title="Xóa" class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

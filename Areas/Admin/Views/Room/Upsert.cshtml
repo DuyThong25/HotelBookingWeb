@@ -1,0 +1,131 @@
+﻿@using HotelBookingWeb.Models.ViewModel
+@model RoomVM;
+
+<div class="container">
+    <div class="card shadow border-1 mt-4">
+        <div class="card-header bg-primary bg-gradient ml-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h2>@(Model.Room.Id == 0 ? "Thêm" : "Chỉnh sửa") Phòng</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">   
+            <form method="post" class="row" enctype="multipart/form-data">
+                @* <div asp-validation-summary="All"></div> *@
+                <input asp-for="@Model.Room.Id" hidden />
+                <input asp-for="@Model.Room.HotelId" hidden />
+                <div class="row">
+                    
+                    <div class="col-md-8">
+                        <div class="text-center p-3 rounded-2 btn btn-outline-dark w-100 mb-3 ">
+                            <h1 class="fw-bold">Khách sạn @Model.Room.Hotel.Name</h1>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="@Model.Room.Name" class="form-control border-0 shadow" />
+                            <label asp-for="@Model.Room.Name"></label>
+                            <span asp-validation-for="@Model.Room.Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="@Model.Room.Code" class="form-control border-0 shadow" />
+                            <label asp-for="@Model.Room.Code"></label>
+                            <span asp-validation-for="@Model.Room.Code" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.Room.CategoryId" asp-items="@Model.CategoryRoomList" class="form-select border-0 shadow">
+                                <option disabled selected>--Select Category --</option>
+                            </select>
+                            <label asp-for="@Model.Room.CategoryId"></label>
+                            <span asp-validation-for="@Model.Room.CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="@Model.Room.Description" class="form-control border-0 shadow" />
+                            <label asp-for="@Model.Room.Description"></label>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-floating py-2 col-12">
+                                    <input asp-for="@Model.Room.PricePerNight" class="form-control border-0 shadow" />
+                                    <label asp-for="@Model.Room.PricePerNight"></label>
+                                    <span asp-validation-for="@Model.Room.PricePerNight" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-floating py-2 col-12">
+                                    <select asp-for="@Model.Room.Status" asp-items="@Model.StatusRoomList" class="form-select border-0 shadow">
+                                    </select>
+                                    <label>Chọn trạng thái phòng</label>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.Room.Id != 0 && Model.Room.CheckIn != null && Model.Room.CheckOut != null)
+                        {
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-floating py-2 col-12">
+                                        <input asp-for="@Model.Room.CheckIn" class="form-control border-0 shadow" />
+                                        <label asp-for="@Model.Room.CheckIn"></label>
+                                        <span asp-validation-for="@Model.Room.CheckIn" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating py-2 col-12">
+                                        <input asp-for="@Model.Room.CheckOut" class="form-control border-0 shadow" />
+                                        <label asp-for="@Model.Room.CheckOut"></label>
+                                        <span asp-validation-for="@Model.Room.CheckOut" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-floating py-2 col-12">
+                            <input type="file" name="files" class="form-control border-0 shadow" multiple />
+                            <label asp-for="@Model.Room.RoomImages"></label>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-6 ">
+                                <button type="submit" class="form-control btn btn-primary">
+                                    @(Model.Room.Id == 0 ? "Thêm" : "Chỉnh sửa")
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <a asp-area="Admin" asp-controller="Hotel" asp-action="Upsert" asp-route-id="@Model.Room.HotelId" class="form-control btn btn-outline-primary border">Quay lại</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height:500px;" class="col-md-4 d-flex flex-column align-items-center overflow-auto">
+                        @if (Model.Room.Id == 0)
+                        {
+                            <img width="300" class="img-fluid rounded border border-1" src="/image/no_image.jpg" alt="Image of Hotel" />
+                        }
+                        else
+                        {
+                            if (Model.Room.RoomImages.Count > 0)
+                            {
+                                foreach (var item in Model.Room.RoomImages)
+                                {
+                                    <div style="width:300px;" class="mb-4 position-relative">
+                                        <img width="300" class="img-fluid rounded border border-1 border-opacity-10 shadow " src="@item.ImageUrl" alt="No image found.." />
+                                        <button asp-action="DeleteImage" asp-route-imageId="@item.ID" asp-route-hotelId="@item.Room.HotelId" title="Remove Image" class="btn btn-outline-danger border-black border-opacity-10  position-absolute bottom-0 end-0 w-100">
+                                            <i class="bi bi-trash h4 fw-bold"></i>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <img width="300" class="img-fluid rounded border border-1" src="/image/no_image.jpg" alt="Image of Hotel" />
+                            }
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial"></partial>
+    }
+}

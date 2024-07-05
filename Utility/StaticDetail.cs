@@ -7,5 +7,11 @@
 
         public const string RoomStatus_Available = "Available";
         public const string RoomStatus_Unavailable = "Unavailable";
+
+        //VND format
+        public static string VndCurrency()
+        {
+            return "#,##0.00 VNĐ";
+        }
     }
 }

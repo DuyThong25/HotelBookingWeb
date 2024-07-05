@@ -8,24 +8,23 @@ namespace HotelBookingWeb.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Không được bỏ trống")]
         [Display(Name = "Tên phòng")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Không được bỏ trống")]
         [Display(Name = "Mã phòng")]
         public string Code { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Không được bỏ trống")]
         [Display(Name ="Mô tả")]
         public string Description { get; set; }
 
-        [Required]
-        [Range(1, 1000)]
+        [Required(ErrorMessage = "Không được bỏ trống")]
         [Display(Name = "Giá phòng/ đêm")]
         public double PricePerNight { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Không được bỏ trống")]
         [Display(Name = "Trạng thái phòng")]
         public string Status { get; set; }
 

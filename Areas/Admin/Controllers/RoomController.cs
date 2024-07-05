@@ -1,56 +1,82 @@
 ﻿using HotelBookingWeb.Data;
 using HotelBookingWeb.Models;
+using HotelBookingWeb.Models.ViewModel;
 using HotelBookingWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingWeb.Areas.Admin.Controllers
 {
     [Area(StaticDetail.Role_Admin)]
     [Authorize(Roles = StaticDetail.Role_Admin)]
-    public class HotelController : Controller
+    public class RoomController : Controller
     {
-        public readonly ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HotelController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        [BindProperty]
+        public RoomVM RoomVM { get; set; }
+        public RoomController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
-
         }
-        public IActionResult Index()
+        public IActionResult Upsert(int? id, int hotelId)
         {
-            return View(_db.Hotels.Include("HotelImages").Include("Rooms").ToList());
-        }
+            List<string> listStatus = new List<string>()
+            {
+                {StaticDetail.RoomStatus_Available },
+                {StaticDetail.RoomStatus_Unavailable }
+            };
+            IEnumerable<SelectListItem> selectListItems =
+                _db.RoomCategories.ToList().Select(x => new SelectListItem
+                {
+                    Text = $"{x.Name} ({x.Capacity} người)",
+                    Value = x.Id.ToString()
+                });
+            IEnumerable<SelectListItem> selectListStatus =
+                listStatus.Select(x => new SelectListItem
+                {
+                    Text = x,
+                    Value = x
+                });
+            var hotelFromDB = _db.Hotels.FirstOrDefault(x => x.Id == hotelId);
 
-        public IActionResult Upsert(int? id)
-        {
-            Hotel hotel = new Hotel();
+            RoomVM = new()
+            {
+                Room = new()
+                {
+                    HotelId = hotelId,
+                    Hotel = hotelFromDB
+                },
+                CategoryRoomList = selectListItems,
+                StatusRoomList = selectListStatus
+            };
 
             if (id != null && id != 0) // update
             {
-                hotel = _db.Hotels.Include("HotelImages").Include("Rooms").FirstOrDefault(x => x.Id == id);       
+                RoomVM.Room = _db.Rooms.Include("RoomImages").FirstOrDefault(x => x.Id == id && x.HotelId == hotelId);
             }
-            return View(hotel);
+            return View(RoomVM);
         }
 
         [HttpPost]
-        public IActionResult Upsert(Hotel hotel, List<IFormFile>? files)
+        public IActionResult Upsert(List<IFormFile>? files)
         {
             if (ModelState.IsValid)
             {
-                if (hotel.Id == 0) // Create
+                if (RoomVM.Room.Id == 0) // Create
                 {
-                    _db.Add(hotel);
+                    _db.Add(RoomVM.Room);
                     _db.SaveChanges();
                     TempData["success"] = "Thêm thành công.";
                 }
                 else // update
                 {
-                    _db.Update(hotel);
+                    _db.Update(RoomVM.Room);
                     _db.SaveChanges();
                     TempData["success"] = "Chỉnh sửa thành công.";
                 }
@@ -58,28 +84,28 @@ namespace HotelBookingWeb.Areas.Admin.Controllers
                 // Handle image
                 if (files != null)
                 {
-                    hotel.HotelImages = HandleToGetFileImage(hotel, files);
-                    _db.Hotels.Update(hotel);
+                    RoomVM.Room.RoomImages = HandleToGetFileImage(RoomVM.Room, files);
+                    _db.Update(RoomVM.Room);
                     _db.SaveChanges();
                 }
-                return RedirectToAction(nameof(Upsert), new { id = hotel.Id });
+                return RedirectToAction(nameof(Upsert), new { id = RoomVM.Room.Id, hotelId = RoomVM.Room.HotelId });
             }
             else
             {
                 TempData["error"] = "Có gì đó không đúng..";
-                return View(hotel); 
+                return RedirectToAction(nameof(Upsert), new { id = RoomVM.Room.Id, hotelId = RoomVM.Room.HotelId });
             }
         }
 
-        public List<HotelImage> HandleToGetFileImage(Hotel hotel, List<IFormFile>? files)
+        public List<RoomImage> HandleToGetFileImage(Room room, List<IFormFile>? files)
         {
-            List<HotelImage> reuslt = new();
+            List<RoomImage> reuslt = new();
 
             foreach (IFormFile file in files)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
                 string fileName = Guid.NewGuid().ToString() + "-" + Path.GetFileName(file.FileName);
-                string productPath = Path.Combine("images", "products", "product-" + hotel.Id.ToString());
+                string productPath = Path.Combine("images", "products", "product-" + room.Id.ToString());
                 string finalPath = Path.Combine(wwwRootPath, productPath);
 
                 // If folder are not created -> create
@@ -93,29 +119,28 @@ namespace HotelBookingWeb.Areas.Admin.Controllers
                     file.CopyTo(fileStream);
                 }
 
-                HotelImage productImage = new()
+                RoomImage roomImage = new()
                 {
                     ImageUrl = @"\" + productPath + @"\" + fileName,
-                    HotelId = hotel.Id,
+                    RoomId = room.Id,
                 };
 
-                if (productImage.ImageUrl == null)
+                if (roomImage.ImageUrl == null)
                 {
-                    reuslt = new List<HotelImage>();
+                    reuslt = new List<RoomImage>();
                 }
                 else
                 {
-                    reuslt.Add(productImage);
+                    reuslt.Add(roomImage);
                 }
-                //HandleDeleteFileImage(hotel.Product, wwwRootPath);
             }
             return reuslt;
         }
 
-        public IActionResult DeleteImage(int imageId)
+        public IActionResult DeleteImage(int imageId, int hotelId)
         {
-            var imageToBeDeleted = _db.HotelImages.FirstOrDefault(x => x.ID == imageId);
-            int hotelId = imageToBeDeleted.HotelId;
+            var imageToBeDeleted = _db.RoomImages.FirstOrDefault(x => x.ID == imageId);
+            int roomId = imageToBeDeleted.RoomId;
             if (imageToBeDeleted != null)
             {
                 if (!String.IsNullOrEmpty(imageToBeDeleted.ImageUrl))
@@ -127,11 +152,11 @@ namespace HotelBookingWeb.Areas.Admin.Controllers
                     }
                 }
 
-                _db.HotelImages.Remove(imageToBeDeleted);
+                _db.RoomImages.Remove(imageToBeDeleted);
                 _db.SaveChanges();
                 TempData["success"] = "Deleted Succesfully.";
             }
-            return RedirectToAction(nameof(Upsert), new { id = hotelId });
+            return RedirectToAction(nameof(Upsert), new { id = roomId, hotelId = hotelId });
         }
 
 
@@ -139,11 +164,11 @@ namespace HotelBookingWeb.Areas.Admin.Controllers
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            Hotel? hotel = _db.Hotels.FirstOrDefault(x => x.Id == id);
+            Room? room = _db.Rooms.FirstOrDefault(x => x.Id == id);
 
-            if (hotel != null)
+            if (room != null)
             {
-                _db.Hotels.Remove(hotel);
+                _db.Rooms.Remove(room);
                 _db.SaveChanges();
                 return Json(new { success = true, message = "Xóa thành công." });
             }

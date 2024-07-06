@@ -4,30 +4,29 @@
     <div class="row text-center">
         <div class="col-md-12">
             <h1 class="my-4">Tìm khách sạn - Giá tốt nhất</h1>
-            <div class="d-flex justify-content-center align-items-center">
-                <div class="input-group w-50">
-                    <input type="text" class="form-control" placeholder="Chọn thành phố mà bạn muốn đến">
-                    <input type="text" class="form-control" id="dateRange" value="" placeholder="Chọn ngày khởi hành">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
+            <form method="post" class="w-100">
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="input-group w-50">
+                        <input name="cityInput" type="text" class="form-control" placeholder="Chọn thành phố mà bạn muốn đến" required>
+                        <input name="inOutDate" type="text" class="form-control" id="dateRange" placeholder="Chọn ngày khởi hành">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
-<div class="container my-4">
-    <h4 class="fw-bold">Lựa chọn tốt nhất</h4>
-    <div class="row">
+<div class="container my-5">
+    <div class="row p-3 mt-5">
         @foreach (Hotel hotel in Model)
         {
             var location = $"Tp.{@hotel.City}, Q.{hotel.Ward}";
             var roomAvailabels = 0;
             if (hotel.Rooms != null && hotel.Rooms.Count > 0)
             {
-                roomAvailabels = hotel.Rooms.Where(x => x.HotelId == @hotel.Id
-                && x.Status == StaticDetail.RoomStatus_Available)
-                .Count();
+                roomAvailabels = hotel.Rooms.Where(x => x.HotelId == @hotel.Id).Count();
             }@if (roomAvailabels != 0)
             {
                 <div class="col-md-3 my-3">
@@ -72,32 +71,19 @@
 
     <script>
         $(document).ready(function () {
+            var formatDate = 'YYYY/MM/DD';
+            // Initialize the date range picker
             $('#dateRange').daterangepicker({
                 locale: {
-                    format: 'DD/MM/YYYY'
+                    format: formatDate
                 }
             });
+            // // Handle apply.daterangepicker event
+            // $('#dateRange').on('apply.daterangepicker', function (ev, picker) {
+            //     startDateValue = picker.startDate.format(formatDate)
+            //     endDateValue = picker.endDate.format(formatDate)
+            // });
+
         });
-
-        // // Function to get cities from API
-        // function getCities() {
-        //     return $.get(
-        //         '/provinces/getAll?limit=-1',
-        //         (data) => {
-        //             console.log(data)
-        //         }
-        //     )
-        // }
-
-        // // Initialize the autocomplete with data from the API
-        // getCities().done(function (data) {
-        //     var cities = data.cities; // Adjust based on your API response structure
-        //     $('#cityInput').autocomplete({
-        //         source: cities
-        //     });
-        // }).fail(function (jqXHR, textStatus, errorThrown) {
-        //     console.error("Error fetching cities: ", textStatus, errorThrown);
-        // });
-
     </script>
 }

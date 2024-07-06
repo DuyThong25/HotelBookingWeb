@@ -1,5 +1,7 @@
+using HotelBookingWeb.Data;
 using HotelBookingWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace HotelBookingWeb.Areas.Customer.Controllers
@@ -9,19 +11,27 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
+        private readonly ApplicationDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger, HttpClient httpClient)
+        public HomeController(ILogger<HomeController> logger, HttpClient httpClient, ApplicationDbContext db)
         {
             _logger = logger;
             _httpClient = httpClient;
+            _db = db;
         }
 
         public IActionResult Index()
         {
 
-            return View();
+            return View(_db.Hotels.Include("HotelImages").Include("Rooms").ToList());
         }
 
+        public IActionResult Detail(int id)
+        {
+            Hotel hotel = _db.Hotels.Include("HotelImages").Include("Rooms").FirstOrDefault(x => x.Id == id);
+
+            return View(hotel);
+        }
         public IActionResult Privacy()
         {
             return View();

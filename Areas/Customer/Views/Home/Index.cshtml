@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<Hotel>
+
 <div class="container-fluid p-0 border border-1 border-top-0 pb-5" style="margin-top:100px;">
     <div class="row text-center">
         <div class="col-md-12">
@@ -18,23 +19,47 @@
 <div class="container my-4">
     <h4 class="fw-bold">Lựa chọn tốt nhất</h4>
     <div class="row">
-        <div class="col-md-3 my-3">
-            <div class="product-card">
-                <img class="img-fluid mb-3">
-                <div class="card-title fw-bold my-3">
-                    <h4>Châu Thiên Tứ</h4>
+        @foreach (Hotel hotel in Model)
+        {
+            var location = $"Tp.{@hotel.City}, Q.{hotel.Ward}";
+            var roomAvailabels = 0;
+            if (hotel.Rooms != null && hotel.Rooms.Count > 0)
+            {
+                roomAvailabels = hotel.Rooms.Where(x => x.HotelId == @hotel.Id
+                && x.Status == StaticDetail.RoomStatus_Available)
+                .Count();
+            }@if (roomAvailabels != 0)
+            {
+                <div class="col-md-3 my-3">
+                    <div class="product-card">
+                        <div style="height:250px;" class="d-flex justify-content-center">
+                            @if (hotel.HotelImages != null && hotel.HotelImages.Count > 0)
+                            {
+                                <img class="img-fluid mb-3 " src="@hotel.HotelImages.FirstOrDefault().ImageUrl" />
+                            }
+                            else
+                            {
+                                <img class="img-fluid mb-3" src="~/image/no_image.jpg">
+                            }
+                        </div>
+                        <div class="card-title fw-bold my-3">
+                            <h4>@hotel.Name</h4>
+                        </div>
+                        <div class="my-3">
+                            <span><i class="bi bi-geo-alt"></i>@location</span>
+                        </div>
+
+                        <div class="my-3 text-success">
+                            <small><strong>Có @roomAvailabels phòng phù hợp</strong></small>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="#" class="btn w-100 btn-outline-primary">Xem Chi Tiết</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="my-3">
-                    <span><i class="bi bi-geo-alt"></i>TP.Hồ Chí Minh, Quận Tân Bình</span>
-                </div>
-                <div class="my-3">
-                    <small><strong>100,000 VND/ đêm</strong></small>
-                </div>
-                <div class="mt-4">
-                    <a href="#" class="btn w-100 btn-outline-primary">Đặt phòng ngay</a>
-                </div>
-            </div>
-        </div>
+            }
+        }
     </div>
 </div>
 

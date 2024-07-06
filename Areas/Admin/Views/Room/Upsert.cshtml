@@ -42,6 +42,7 @@
                         <div class="form-floating py-2 col-12">
                             <input asp-for="@Model.Room.Description" class="form-control border-0 shadow" />
                             <label asp-for="@Model.Room.Description"></label>
+                            <span asp-validation-for="@Model.Room.Description" class="text-danger"></span>
                         </div>
                         <div class="row">
                             <div class="col-sm-6">

@@ -1,5 +1,7 @@
 using HotelBookingWeb.Data;
 using HotelBookingWeb.Models;
+using HotelBookingWeb.Utility;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -22,8 +24,38 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            string checkIn = DateTime.Now.ToString("yyyy/MM//dd");
+            string checkOut = DateTime.Now.ToString("yyyy/MM//dd");
+            var hotelAvailalbelFromDB = _db.Hotels.Include("HotelImages").Include("Rooms").ToList();
+            foreach (var hotel in hotelAvailalbelFromDB)
+            {
+                if (hotel.Rooms != null && hotel.Rooms.Count > 0)
+                {
+                    hotel.Rooms.Where(x => x.HotelId == @hotel.Id
+                                    && x.CheckIn?.ToString("yyyy/MM//dd") != checkIn
+                                    && x.CheckOut?.ToString("yyyy/MM//dd") != checkOut).ToList();
+                }
+            }
+            return View(hotelAvailalbelFromDB);
+        }
 
-            return View(_db.Hotels.Include("HotelImages").Include("Rooms").ToList());
+        [HttpPost]
+        public IActionResult Index([FromForm] string cityInput, string inOutDate)
+        {
+            string checkIn = inOutDate.Split(" - ")[0].Trim();
+            string checkOut = inOutDate.Split(" - ")[1].Trim();
+            var hotelAvailalbelFromDB = _db.Hotels.Include("HotelImages").Include("Rooms").Where(x => x.City.Contains(cityInput)).ToList();
+            foreach (var hotel in hotelAvailalbelFromDB)
+            {
+                if (hotel.Rooms != null && hotel.Rooms.Count > 0)
+                {
+                    hotel.Rooms.Where(x => x.HotelId == @hotel.Id
+                                    && x.CheckIn?.ToString("yyyy/MM//dd") != checkIn
+                                    && x.CheckOut?.ToString("yyyy/MM//dd") != checkOut).ToList();
+                }
+
+            }
+            return View(hotelAvailalbelFromDB);
         }
 
         public IActionResult Detail(int id)

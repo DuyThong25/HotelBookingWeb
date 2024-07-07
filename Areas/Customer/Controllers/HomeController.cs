@@ -1,4 +1,5 @@
 ﻿using HotelBookingWeb.Data;
+using HotelBookingWeb.Data.IRepository;
 using HotelBookingWeb.Models;
 using HotelBookingWeb.Models.ViewModel;
 using HotelBookingWeb.Utility;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -19,10 +22,12 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
         private readonly ApplicationDbContext _db;
+        private readonly IMomoSetting _momoSetting;
         public DetailHotelVM DetailHotelVM { get; set; }
 
-        public HomeController(ILogger<HomeController> logger, HttpClient httpClient, ApplicationDbContext db)
+        public HomeController(ILogger<HomeController> logger, HttpClient httpClient, ApplicationDbContext db, IMomoSetting momoSetting)
         {
+            _momoSetting = momoSetting;
             _logger = logger;
             _httpClient = httpClient;
             _db = db;
@@ -191,17 +196,45 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public IActionResult Summary(ShoppingCartVM shoppingCartVM)
+        public IActionResult SummaryAsync(ShoppingCartVM shoppingCartVM)
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCartVM.RoomCartSelectedList = _db.ShoppingCarts.Include("Room").Where(x => x.ApplicationUserId == userId).ToList();
 
             shoppingCartVM.OrderHeader.PaymentDate = DateTime.Now;
+            shoppingCartVM.OrderHeader.OrderStatus = StaticDetail.OrderStatus_Pending;
+            shoppingCartVM.OrderHeader.PaymentStatus = StaticDetail.PaymentStatus_Pending;
+
+            _db.OrderHeaders.Add(shoppingCartVM.OrderHeader);
+            _db.SaveChanges();
+
+            // Save in table OrderDetail
+            foreach (var cart in shoppingCartVM.RoomCartSelectedList)
+            {
+                OrderDetail orderDetail = new()
+                {
+                    OrderHeaderId = shoppingCartVM.OrderHeader.Id,
+                    RoomId = cart.RoomId,                 
+                    pricePerNight = cart.Room.PricePerNight,
+                    totalNightStay = cart.Room.totalNightStay
+                };
+                _db.OrderDetails.Add(orderDetail);
+                _db.SaveChanges();
+            }
 
 
+            var response = _momoSetting.CreatePaymentAsync(shoppingCartVM);
 
-            return View();
+            try
+            {
+                return Redirect(response.payUrl.Value);
+            }
+            catch
+            {
+                TempData["Error"] = "Lỗi xảy ra.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         public IActionResult Privacy()

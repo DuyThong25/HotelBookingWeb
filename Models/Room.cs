@@ -17,7 +17,7 @@ namespace HotelBookingWeb.Models
         public string Code { get; set; }
 
         [Required(ErrorMessage = "Không được bỏ trống")]
-        [Display(Name ="Mô tả")]
+        [Display(Name = "Mô tả")]
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Không được bỏ trống")]
@@ -28,10 +28,10 @@ namespace HotelBookingWeb.Models
         [Display(Name = "Trạng thái phòng")]
         public string Status { get; set; }
 
-        [Display(Name ="Ngày đặt phòng")]
-        public DateTime? CheckIn {  get; set; }
+        [Display(Name = "Ngày đặt phòng")]
+        public DateTime? CheckIn { get; set; }
         [Display(Name = "Ngày trả phòng")]
-        public DateTime? CheckOut {  get; set; }
+        public DateTime? CheckOut { get; set; }
 
         public int HotelId { get; set; }
         [ForeignKey("HotelId")]
@@ -47,6 +47,9 @@ namespace HotelBookingWeb.Models
         [Display(Name = "Hình ảnh phòng")]
         public List<RoomImage> RoomImages { get; set; }
 
-
+        [NotMapped]
+        public double totalPriceRoom { get; set; }
+        [NotMapped]
+        public int totalNightStay { get; set; }
     }
 }

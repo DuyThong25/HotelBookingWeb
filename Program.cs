@@ -32,6 +32,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // Add DBInitializer
 builder.Services.AddScoped<IDbinitializer, DbInitializer>();
 builder.Services.AddScoped<IMomoSetting, MomoSettings>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
 var app = builder.Build();

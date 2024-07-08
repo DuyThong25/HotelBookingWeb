@@ -5,6 +5,7 @@ using HotelBookingWeb.Models.ViewModel;
 using HotelBookingWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -16,25 +17,48 @@ using System.Security.Claims;
 namespace HotelBookingWeb.Areas.Customer.Controllers
 {
     [Area(StaticDetail.Role_Customer)]
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly HttpClient _httpClient;
         private readonly ApplicationDbContext _db;
         private readonly IMomoSetting _momoSetting;
         public DetailHotelVM DetailHotelVM { get; set; }
 
-        public HomeController(ILogger<HomeController> logger, HttpClient httpClient, ApplicationDbContext db, IMomoSetting momoSetting)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db, IMomoSetting momoSetting)
         {
             _momoSetting = momoSetting;
             _logger = logger;
-            _httpClient = httpClient;
             _db = db;
         }
 
         public IActionResult Index()
         {
+            //// Kiểm tra có ai đặt phòng vào hôm nay không
+            //var orderDetailFormDB = _db.OrderDetails.Include("Room").Include("OrderHeader").Where(x => x.OrderHeader.CheckInDate == DateTime.Now).ToList();
+            //if (orderDetailFormDB.Count > 0 && orderDetailFormDB != null)
+            //{
+            //    // Có người đặt phòng vào hôm nay -> cap nhat trang thai phong
+            //    foreach (var orderDetail in orderDetailFormDB)
+            //    {
+            //        // QUa ngay thue phong
+            //        if (orderDetail.Room.CheckIn < DateTime.Now && orderDetail.Room.CheckOut < DateTime.Now)
+            //        {
+            //            orderDetail.Room.CheckIn = null;
+            //            orderDetail.Room.CheckOut = null;
+            //            orderDetail.Room.Status = StaticDetail.RoomStatus_Available;
+            //        }
+            //        if (orderDetail.Room.Status == StaticDetail.RoomStatus_Available)
+            //        {
+            //            // Neu phong dang trong ma co lich check in vao hom nay thi cap nhat
+            //            orderDetail.Room.CheckIn = orderDetail.OrderHeader.CheckInDate;
+            //            orderDetail.Room.CheckOut = orderDetail.OrderHeader.CheckOutDate;
+            //            orderDetail.Room.Status = StaticDetail.RoomStatus_Unavailable;
+            //        }
+
+            //    }
+            //}
+
+
             string checkIn = DateTime.Now.ToString("yyyy/MM/dd");
             string checkOut = DateTime.Now.ToString("yyyy/MM/dd");
             DetailHotelVM = new()
@@ -120,7 +144,8 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public IActionResult Detail(DetailHotelVM detailHotelVM , List<int> selectedRooms, int totalNightStay, DateTime checkInDate, DateTime checkOutDate)
+        [Authorize]
+        public IActionResult Detail(DetailHotelVM detailHotelVM, List<int> selectedRooms, int totalNightStay, DateTime checkInDate, DateTime checkOutDate)
         {
             if (selectedRooms != null && selectedRooms.Count > 0)
             {
@@ -140,6 +165,7 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
                     {
                         RoomId = roomSelectedId,
                         ApplicationUserId = userId,
+                        HotelId = detailHotelVM.Hotel.Id
                     };
                     _db.ShoppingCarts.Add(shoppingCart);
                     _db.SaveChanges();
@@ -196,7 +222,7 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public IActionResult SummaryAsync(ShoppingCartVM shoppingCartVM)
+        public IActionResult Summary(ShoppingCartVM shoppingCartVM, int totalNightStay)
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -215,9 +241,9 @@ namespace HotelBookingWeb.Areas.Customer.Controllers
                 OrderDetail orderDetail = new()
                 {
                     OrderHeaderId = shoppingCartVM.OrderHeader.Id,
-                    RoomId = cart.RoomId,                 
+                    RoomId = cart.RoomId,
                     pricePerNight = cart.Room.PricePerNight,
-                    totalNightStay = cart.Room.totalNightStay
+                    totalNightStay = totalNightStay
                 };
                 _db.OrderDetails.Add(orderDetail);
                 _db.SaveChanges();

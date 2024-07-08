@@ -2,6 +2,9 @@ using HotelBookingWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using HotelBookingWeb.DbInitializer;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using HotelBookingWeb.Data.IRepository;
+using HotelBookingWeb.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +30,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // Add DBInitializer
-builder.Services.AddScoped<IDbinitializer, DbInitializer >();
+builder.Services.AddScoped<IDbinitializer, DbInitializer>();
+builder.Services.AddScoped<IMomoSetting, MomoSettings>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
 var app = builder.Build();

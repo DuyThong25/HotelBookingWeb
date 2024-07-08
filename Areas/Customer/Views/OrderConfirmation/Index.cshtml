@@ -1,0 +1,28 @@
+﻿@model OrderHeader
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center vh-100 align-content-center ">
+            @if (Model.OrderStatus == StaticDetail.OrderStatus_Approved && Model.PaymentStatus == StaticDetail.PaymentStatus_Approved)
+            {
+                // Normal Customer
+                <h2 class="fw-bold">Mã thanh toán là: @Model.PaymentIntentId</h2>
+                <h1 class="text-success fw-bold">
+                    Thanh toán thành công
+                </h1>
+                <small>Vui lòng có mặt tại khách sạn trước 30p để hoàn thành các thủ tục cần thiết</small>
+                <br />
+                <a class="text-dark text-opacity-50" href="https://mail.google.com/">Kiểm tra hóa đơn tại gmail</a>
+            }
+            else
+            {     // Normal Customer
+                <h1 class="text-danger fw-bold">
+                    Thanh toán thất bại
+                </h1>
+                <small>Vui lòng thử thanh toán lại.</small>
+            }
+        </div>
+    </div>
+</div>
+
+

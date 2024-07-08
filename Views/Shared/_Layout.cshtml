@@ -18,7 +18,9 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
-
+    <!-- Add the slick-theme.css for slide image -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
 </head>
 <body>
     <header>
@@ -46,7 +48,7 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="RoomCategory" asp-action="Index">Loại phòng</a>
-                                    </li>  
+                                    </li>
                                     <li>
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="Hotel" asp-action="Index">Khách sạn</a>
                                     </li>
@@ -59,22 +61,28 @@
             </div>
         </nav>
     </header>
-    <div style="margin-top:100px; margin-bottom:50px;">
+    <div class="vh-100" style="margin-top:100px;">
         <main class="vh-100" role="main">
             <partial name="_NotificationPartial"></partial>
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+   @*  <footer class="border-top footer text-muted" s
         <div class="container">
-            &copy; 2024 - HotelBookingWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
+    </footer> *@
+    <div class="footer fixed-bottom " style="margin-top:1000px;">
+        <div class="">
+        &copy; 2024 - HotelBookingWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
+
     <!-- Datatables JS -->
     <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
     <script src="~/js/handleDatatable.js" asp-append-version="true"></script>

@@ -1,0 +1,158 @@
+﻿@using HotelBookingWeb.Models.ViewModel
+@using System.Globalization
+@model DetailHotelVM
+@{
+    var location = $"{Model.Hotel.Street}, P.{Model.Hotel.Ward}, Q.{Model.Hotel.Distinct}, TP.{Model.Hotel.City}";
+
+    DateTime startDate = DateTime.ParseExact(Model.CheckInDate, "yyyy/MM/dd", null);
+    DateTime endDate = DateTime.ParseExact(Model.CheckOutDate, "yyyy/MM/dd", null);
+    // Tính tổng số ngày
+    int nightStay = 1;
+    if (startDate != endDate)
+    {
+        nightStay = (endDate - startDate).Days;
+    }
+}
+<div class="container border border-1 border-black border-opacity-10 shadow border-top-0 rounded-2">
+    <div class="row my-5">
+        <div class="p-5 text-center border border-1 border-black bg-primary">
+            <h1 class="text-light fw-bold">Khách sạn @Model.Hotel.Name</h1>
+            <h5 class="text-light text-opacity-50 ">@location</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5 d-flex justify-content-center">
+            @if (Model.Hotel.HotelImages != null && Model.Hotel.HotelImages.Count > 0)
+            {
+                <div class="w-100">
+                    <div class="slider-for mb-2">
+                        @foreach (var image in Model.Hotel.HotelImages)
+                        {
+                            <div>
+                                <img class="w-100 img-fluid rounded rounded-4 shadow box-shadow" src="@image.ImageUrl" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="border border-1 border-black border-opacity-10 shadow rounded rounded-top-2 rounded-bottom-5 ">
+                    <img class="w-100 h-100 img-fluid rounded rounded-top-2 rounded-bottom-5 " src="~/images/product/no_image.jpg" />
+                </div>
+            }
+        </div>
+        <div class="col-md-7 ">
+            <div class="row">
+                @if (Model.Hotel.HotelImages != null && Model.Hotel.HotelImages.Count > 0)
+                {
+                    <div class="w-100 h-100 opacity-75 ">
+                        <div class="slider-nav">
+                            @foreach (var image in Model.Hotel.HotelImages)
+                            {
+                                <div class="p-3">
+                                    <img class="w-75 rounded rounded-4 img-fluid" src="@image.ImageUrl" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="border border-1 border-black border-opacity-10 shadow rounded rounded-top-2 rounded-bottom-5 ">
+                        <img class="w-100 h-100 img-fluid rounded rounded-top-2 rounded-bottom-5 " src="~/images/product/no_image.jpg" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-12">
+            <h2 class="text-center text-decoration-underline fst-italic my-4">Mô Tả</h2>
+            @if (!String.IsNullOrEmpty(Model.Hotel.Description))
+            {
+                <p class="fw-bold">
+                    @Model.Hotel.Description
+                </p>
+            }
+            else
+            {
+                <p>
+                    Chưa có mô tả..
+                </p>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <h2 class="text-center text-decoration-underline fst-italic my-4">Danh sách phòng trống</h2>
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="@Model.Hotel.Id" hidden>
+            <input asp-for="@Model.CheckInDate" hidden>
+            <input asp-for="@Model.CheckOutDate" hidden>
+
+            <input name="totalNightStay" value="@nightStay" hidden>
+            <input name="checkInDate" value="@startDate" hidden>
+            <input name="checkOutDate" value="@endDate" hidden>
+
+            <div class="table-responsive">
+                <table id="myTable" class="table table-bordered table-striped w-100">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <th>Tên phòng</th>
+                            <th>Số lượng khách</th>
+                            <th>Giá tiền @nightStay đêm </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Room item in Model.Hotel.Rooms)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="selectedRooms" value="@item.Id" />
+                                </td>
+                                <td>@item.Name</td>
+                                <td>@item.CategoryRoom.Capacity</td>
+                                <td>@StaticDetail.VndCurrency(item.PricePerNight * nightStay)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary my-5 w-50">
+                    Đặt phòng
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.slider-for').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: true,
+                fade: true,
+                asNavFor: '.slider-nav',
+                infinite: true,
+                speed: 500,
+                autoplay: true,
+                autoplaySpeed: 4000,
+            });
+            $('.slider-nav').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                asNavFor: '.slider-for',
+                dots: true,
+                centerMode: true,
+                arrows: true,
+                centerPadding: '100px',
+                focusOnSelect: true,
+            });
+        });
+    </script>
+}

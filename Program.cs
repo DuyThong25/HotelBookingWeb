@@ -5,6 +5,7 @@ using HotelBookingWeb.DbInitializer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using HotelBookingWeb.Data.IRepository;
 using HotelBookingWeb.Utility;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
 
 });
+builder.Services.AddAuthentication()
+    .AddGoogle(option =>
+    {
+        option.ClientId = builder.Configuration.GetSection("GoogleLogin:ClientId").Get<string>();
+        option.ClientSecret = builder.Configuration.GetSection("GoogleLogin:ClientSecret").Get<string>();
+        option.AccessDeniedPath = "/Identity/Account/Login";
+    });
+
 
 // Add DBInitializer
 builder.Services.AddScoped<IDbinitializer, DbInitializer>();
